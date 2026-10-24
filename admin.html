@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Store Manager</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"><link rel="stylesheet" href="style.css"></head>
+<body class="adm"><header class="top"><div class="wrap"><span class="logo">Store Manager</span><nav class="links"><a href="index.html">View site</a></nav></div></header>
+<main class="wrap">
+<h1>Change your clothes and prices</h1>
+<div class="panel"><h2>How it works</h2><p>Edit anything below. Changes save in this browser as you type.</p>
+<ol class="how"><li><b>Edit</b><br>Change names, prices, colors, photos and stock.</li><li><b>Preview</b><br>Press Preview store to see your changes.</li><li><b>Download</b><br>Press Download data.js.</li><li><b>Upload</b><br>On GitHub: Add file, Upload files, drop in data.js, Commit. Live in 1 to 2 minutes.</li></ol></div>
+<div class="panel"><h2>Quick price tools</h2><p>Change every product at once.</p><div class="bulk"><label>Percent<input id="pct" type="number" value="20" min="1" max="90"></label><button id="sale">Put everything on sale</button><button id="unsale">End all sales</button><button id="up">Raise all prices</button><button id="down">Lower all prices</button></div></div>
+<div class="panel"><h2>Store settings</h2><p>Brand name, banner and home page words.</p><div class="fields" id="set"></div></div>
+<div class="panel"><h2>Products</h2><p>Use Add product for a new item. Leave Original price at 0 when there's no sale. Paste a photo path like images/hoodie.jpg to replace the drawing.</p><button class="btn" id="add" style="margin-bottom:16px">+ Add product</button><div id="list"></div></div>
+</main>
+<div class="actions"><button class="btn ghost" id="prev">Preview store</button><button class="btn" id="dl">Download data.js</button><button class="btn ghost" id="copy">Copy code</button><button class="btn ghost" id="reset">Reset changes</button><span id="status" role="status"></span></div>
+<script src="data.js"></script><script src="admin.js"></script></body></html>
