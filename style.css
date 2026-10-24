@@ -85,3 +85,15 @@ input[type=color]{padding:3px;height:42px;cursor:pointer}
 #status{color:var(--lime);font-weight:600;min-width:160px}
 @media (max-width:820px){.two{grid-template-columns:1fr}.blob{opacity:.3}.links a:not(.btn){display:none}.hero{padding:70px 0 50px}}
 @media (prefers-reduced-motion:reduce){.strip div{animation:none}*{transition:none!important}html{scroll-behavior:auto}}
+.actions .btn{padding:10px 18px}
+.actions .btn:disabled{opacity:.35;cursor:not-allowed}
+.state{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:.9rem}
+.state::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--lime)}
+.state.dirty{color:#ffd166}.state.dirty::before{background:#ffd166}
+.btn:disabled{opacity:.35;cursor:not-allowed}.btn:disabled:hover{background:var(--lime)}.btn.ghost:disabled:hover{background:transparent}
+#state{font-weight:700;color:var(--lime)}#state.warn{color:#ffb454}
+.gate{max-width:480px;margin:90px auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:34px}
+.gate h1{font-size:2.2rem;margin:0 0 10px}.gate p{color:var(--muted);margin:0 0 18px}.gate label{margin-bottom:14px}
+.gate .btn{width:100%}.gate .skip{background:none;border:0;color:var(--muted);text-decoration:underline;margin-top:14px;cursor:pointer;font:inherit;width:100%}
+#gmsg{min-height:1.4em;color:#ffb454;font-weight:600;margin-top:12px}
+.note{background:var(--deep);border-radius:12px;padding:12px 14px;font-size:.9rem;color:var(--muted);margin-top:14px}
