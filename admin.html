@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Store Manager</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"><link rel="stylesheet" href="style.css"></head>
+<body class="adm"><header class="top"><div class="wrap"><span class="logo">Store Manager</span><nav class="links"><a href="index.html">View site</a></nav></div></header>
+
+<div class="gate" id="gate">
+  <div id="g-lock" hidden>
+    <h1>Enter passcode</h1><p>This area is for the store owner.</p>
+    <label>Passcode<input id="pw" type="password" autocomplete="current-password"></label>
+    <button class="btn" id="unlock">Unlock</button><div id="gmsg" role="status"></div>
+  </div>
+  <div id="g-setup" hidden>
+    <h1>Create your passcode</h1><p>Choose a passcode (8 or more characters, a short phrase is best). It will work in every browser once you upload the file the next step creates.</p>
+    <label>New passcode<input id="np" type="password" autocomplete="new-password"></label>
+    <label>Type it again<input id="np2" type="password" autocomplete="new-password"></label>
+    <button class="btn" id="mk">Create passcode file</button>
+    <button class="skip" id="skip">Continue without a passcode for now</button><div id="gmsg2" role="status"></div>
+    <div class="note">After it downloads, upload <b>lock.js</b> to GitHub (Add file, Upload files). Until you do, this page stays open to anyone who finds it.</div>
+  </div>
+</div>
+
+<div id="app" hidden>
+<main class="wrap">
+<h1>Change your clothes and prices</h1>
+<div class="panel"><h2>How it works</h2>
+<ol class="how"><li><b>Edit</b><br>Change names, prices, colors, photos and stock.</li><li><b>Save changes</b><br>Press the green button at the bottom to confirm your edits.</li><li><b>Preview, then download</b><br>Check the preview, then press Download data.js.</li><li><b>Upload</b><br>On GitHub: Add file, Upload files, drop in data.js, Commit. Live in 1 to 2 minutes.</li></ol></div>
+<div class="panel"><h2>Quick price tools</h2><p>Change every product at once. Press Save changes afterwards.</p><div class="bulk"><label>Percent<input id="pct" type="number" value="20" min="1" max="90"></label><button id="sale">Put everything on sale</button><button id="unsale">End all sales</button><button id="up">Raise all prices</button><button id="down">Lower all prices</button></div></div>
+<div class="panel"><h2>Store settings</h2><p>Brand name, banner and home page words.</p><div class="fields" id="set"></div></div>
+<div class="panel"><h2>Products</h2><p>Use Add product for a new item. Leave Original price at 0 when there's no sale. Paste a photo path like images/hoodie.jpg to replace the drawing.</p><button class="btn" id="add" style="margin-bottom:16px">+ Add product</button><div id="list"></div></div>
+</main>
+<div class="actions"><span id="state">✓ All changes saved</span><button class="btn" id="saveb" disabled>Save changes</button><button class="btn ghost" id="prev">Preview store</button><button class="btn" id="dl">Download data.js</button><button class="btn ghost" id="copy">Copy code</button><button class="btn ghost" id="imp">Load a data.js file</button><button class="btn ghost" id="chpw">Change passcode</button><button class="btn ghost" id="reset">Reset</button><input type="file" id="file" accept=".js,text/javascript" hidden><span id="status" role="status"></span></div>
+</div>
+<script src="data.js"></script><script src="lock.js"></script><script src="admin.js"></script></body></html>
