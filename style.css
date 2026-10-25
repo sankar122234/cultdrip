@@ -102,7 +102,7 @@ input[type=color]{padding:3px;height:42px;cursor:pointer}
 /* ===== Cream crumpled-paper theme (all public pages; admin stays green) ===== */
 html{background:#f4ecd9}
 body:not(.adm){--text:#0b2a1d;--muted:#47594e;--card:rgba(255,252,243,.72);--line:rgba(11,42,29,.2);background:transparent;color:#0b2a1d}
-body:not(.adm)::before{content:"";position:fixed;inset:0;z-index:-1;background:url(images/paper.jpg) center/cover no-repeat,#f4ecd9}
+body:not(.adm)::before{content:"";position:fixed;inset:0;z-index:-1;background:url(paper.jpg) center/cover no-repeat,#f4ecd9}
 body:not(.adm) :focus-visible{outline-color:#227d47}
 body:not(.adm) header.top{background:rgba(244,236,217,.9)}
 body:not(.adm) .links a:hover,body:not(.adm) .links a.on,body:not(.adm) .crumbs a:hover{color:#227d47}
