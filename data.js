@@ -21,7 +21,9 @@ var PRODUCTS = [
     "status": "live",
     "tag": "Limited",
     "images": [
-      "images/1-1-mvqbho2k.jpg"
+      "images/1-1-mvqbho2k.jpg",
+      "images/1-2-mvqbyam9.jpg",
+      "images/1-3-mvqbyqa2.jpg"
     ]
   },
   {
@@ -36,7 +38,8 @@ var PRODUCTS = [
     "status": "live",
     "tag": "",
     "images": [
-      "images/2-1-mvqbhycd.jpg"
+      "images/2-1-mvqbhycd.jpg",
+      "images/2-2-mvqbz3k8.jpg"
     ]
   },
   {
@@ -66,7 +69,8 @@ var PRODUCTS = [
     "status": "live",
     "tag": "",
     "images": [
-      "images/4-1-mvqbieyl.jpg"
+      "images/4-1-mvqbieyl.jpg",
+      "images/4-2-mvqbzjdb.jpg"
     ]
   },
   {
