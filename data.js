@@ -34,10 +34,13 @@ var PRODUCTS = [
     "price": 47.52,
     "was": 0,
     "color": "#121212",
-    "image": "",
+    "image": "images/2-1-mvquxj11.jpg",
     "status": "live",
     "tag": "",
-    "images": []
+    "images": [
+      "images/2-1-mvquxj11.jpg",
+      "images/2-2-mvquxmjq.jpg"
+    ]
   },
   {
     "id": 3,
@@ -47,10 +50,12 @@ var PRODUCTS = [
     "price": 104.54,
     "was": 0,
     "color": "#8a8f7a",
-    "image": "",
+    "image": "images/3-1-mvquxwx5.jpg",
     "status": "live",
     "tag": "",
-    "images": []
+    "images": [
+      "images/3-1-mvquxwx5.jpg"
+    ]
   },
   {
     "id": 4,
