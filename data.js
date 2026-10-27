@@ -17,10 +17,14 @@ var PRODUCTS = [
     "price": 57.02,
     "was": 0,
     "color": "#ffcf24",
-    "image": "",
+    "image": "images/1-1-mvqu4nn3.jpg",
     "status": "live",
     "tag": "Best seller",
-    "images": []
+    "images": [
+      "images/1-1-mvqu4nn3.jpg",
+      "images/1-2-mvqu51c6.jpg",
+      "images/1-3-mvqu55co.jpg"
+    ]
   },
   {
     "id": 2,
