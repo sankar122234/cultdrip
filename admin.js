@@ -1,4 +1,4 @@
-/* cd-version:4 */
+/* cd-version:5 */
 var KEY="cd_draft",SESS="cd_ok",TRY="cd_try",TOK="cd_tok";
 var LIVE=JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS}),dirty=false,started=false,busy=false;
 function $(s){return document.querySelector(s)}
@@ -83,7 +83,7 @@ $("#mk").onclick=function(){
 $("#skip").onclick=function(){if(started){$("#gate").hidden=true;$("#app").hidden=false}else open()};
 $("#chpw").onclick=function(){$("#app").hidden=true;$("#gate").hidden=false;$("#g-lock").hidden=true;$("#g-setup").hidden=false};
 /* ---------- editor ---------- */
-var SET=[["brand","Brand name","text"],["announce","Top banner message","text"],["heroTitle","Home headline","text"],["heroText","Home sub-text","text"],["shopTitle","Shop page title","text"],["currency","Currency symbol","text"],["freeShip","Free shipping over","num"],["delivery","Delivery info (product page)","text"],["returns","Returns info (product page)","text"],["orderEmail","Order & contact email (orders and messages go here)","text"],["formUrl","Form address for sign-ups and messages (optional, a https link from a service like Formspree)","text"],["instagram","Instagram link or @handle","text"],["tiktok","TikTok link or @handle","text"]];
+var SET=[["brand","Brand name","text"],["announce","Top banner message","text"],["heroTitle","Home headline","text"],["heroText","Home sub-text","text"],["shopTitle","Shop page title","text"],["currency","Currency symbol","text"],["freeShip","Free shipping over","num"],["delivery","Delivery info (product page)","text"],["returns","Returns info (product page)","text"],["perks","Info lines under the sizes on every product (one per line, e.g. Free shipping over $300)","area"],["orderEmail","Order & contact email (orders and messages go here)","text"],["formUrl","Form address for sign-ups and messages (optional, a https link from a service like Formspree)","text"],["instagram","Instagram link or @handle","text"],["tiktok","TikTok link or @handle","text"]];
 var TYPES=["hoodie","tee","pants","cap"],STAT=[["live","On sale now"],["soldout","Sold out"],["hidden","Hidden"]],TAGS=[["","No badge"],["New","New"],["Limited","Limited"],["Best seller","Best seller"]];
 function say(m,ms){var s=$("#status");s.textContent=m;clearTimeout(say.t);say.t=setTimeout(function(){s.textContent=""},ms||3500)}
 function ui(){
@@ -102,7 +102,7 @@ function commit(){
 function opts(list,cur){return list.map(function(o){var v=o instanceof Array?o[0]:o,l=o instanceof Array?o[1]:o;return '<option value="'+esc(v)+'"'+(v===cur?' selected':'')+'>'+esc(l)+'</option>'}).join("")}
 function nfld(attr,label,v){return '<label>'+label+'<input '+attr+' data-num="1" type="text" inputmode="decimal" value="'+esc(v)+'"></label>'}
 function drawSet(){$("#set").innerHTML=SET.map(function(s){var v=STORE[s[0]]==null?"":STORE[s[0]];
-  return s[2]==="num"?nfld('data-s="'+s[0]+'"',s[1],v):'<label>'+s[1]+'<input data-s="'+s[0]+'" type="text" value="'+esc(v)+'"></label>'}).join("")}
+  return s[2]==="area"?'<label class="wide">'+s[1]+'<textarea data-s="'+s[0]+'" rows="3">'+esc(v)+'</textarea></label>':s[2]==="num"?nfld('data-s="'+s[0]+'"',s[1],v):'<label>'+s[1]+'<input data-s="'+s[0]+'" type="text" value="'+esc(v)+'"></label>'}).join("")}
 function fld(i,k,label,type,v){return '<label>'+label+'<input data-i="'+i+'" data-k="'+k+'" type="'+type+'" value="'+esc(v)+'"></label>'}
 function sel(i,k,label,list,cur){return '<label>'+label+'<select data-i="'+i+'" data-k="'+k+'">'+opts(list,cur)+'</select></label>'}
 function title(p,i){
@@ -132,7 +132,7 @@ function drawProd(){
     fld(i,"sizes","Sizes, comma separated (blank = none)","text",p.sizes===undefined?"S,M,L,XL":p.sizes)+fld(i,"soldSizes","Sizes out of stock, comma separated","text",p.soldSizes||"")+
     fld(i,"colorName","Colour name (e.g. Ash Grey)","text",p.colorName||"")+fld(i,"group","Colour group (same word on each colour of one item)","text",p.group||"")+'</div>'+
     '<div class="fields">'+area(i,"desc","Description",p.desc,"A few sentences about the piece",4)+area(i,"materials","Materials (one per line)",p.materials,"80% cotton\n20% polyester")+
-    area(i,"specs","Specifications (one per line)",p.specs,"Oversized fit\nBrushed fleece inside")+area(i,"features","Feature tiles, up to 3 (one per line: Title | detail)",p.features,"4-way stretch | Moves with you")+
+    area(i,"specs","Specifications (one per line)",p.specs,"Oversized fit\nBrushed fleece inside")+area(i,"features","Feature tiles, up to 3 (one per line: Title | detail | photo path, photo optional)",p.features,"4-way stretch | Moves with you | images/stretch.jpg")+area(i,"performance","Performance scores out of 5, up to 3 (one per line: Name | score | note)",p.performance,"Stretch | 4 | Cotton elastane\nInsulation | 3.5 | Cotton rich blend")+
     area(i,"sizeGuide","Size guide table (one row per line, columns split by |)",p.sizeGuide,"Size | Chest | Length\nS | 52cm | 68cm\nM | 55cm | 70cm",5)+'</div></div>'}).join("")}
 function resizeImage(file,cb){
   var r=new FileReader();r.onerror=function(){cb(null)};
@@ -204,8 +204,8 @@ $("#ghc").onclick=function(){
   }).catch(function(e){gh(typeof e==="string"?e:"Could not reach GitHub. Check your internet connection.",true)})};
 $("#ghd").onclick=function(){if(!connected())return;if(confirm("Remove the saved token from this browser?")){clearTok();ghStatus();ui()}};
 /* ---------- site files check ---------- */
-var BUILD=4,BUILD_DATE="27 Oct 2026",WHATS_NEW="A friendlier shop: mobile menu, cart quantities, working forms, safer data handling, a 404 page and accessibility fixes.";
-var EXPECT={"index.html":3,"shop.html":3,"product.html":4,"about.html":3,"contact.html":3,"404.html":3,"admin.html":4,"style.css":4,"script.js":4,"admin.js":4};
+var BUILD=5,BUILD_DATE="27 Oct 2026",WHATS_NEW="A friendlier shop: mobile menu, cart quantities, working forms, safer data handling, a 404 page and accessibility fixes.";
+var EXPECT={"index.html":3,"shop.html":3,"product.html":5,"about.html":3,"contact.html":3,"404.html":3,"admin.html":5,"style.css":5,"script.js":5,"admin.js":5};
 function checkFiles(){
   var out=$("#chkout");out.innerHTML="<li>Checking…</li>";
   if(!window.fetch){out.innerHTML="<li>This browser can't run the check.</li>";return Promise.resolve()}

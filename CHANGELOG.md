@@ -7,6 +7,11 @@ Each time new files are sent, the version number goes up by one. The Store Manag
 2. Click Commit changes, wait two minutes, then hard-refresh with Ctrl+Shift+R.
 3. Open the Store Manager, then Site files check. Everything should show a tick.
 
+## Version 5 (27 Oct 2026)
+- Product page now follows the Represent layout: vertical thumbnails beside one large photo, stacked panels (colour swatches, sizes, info lines, big Add to cart), feature photo tiles, performance score bars, intro text, 2x2 accordions (Specifications, Materials, Size guide, Shipping & Returns) and a sticky bottom buy bar with colour and size pickers.
+- Store Manager: Performance scores box, optional photo for each feature tile, and a store-wide info-lines box.
+- Upload: product.html, script.js, style.css, admin.js, admin.html. Do not upload data.js.
+
 ## Version 4 (27 Oct 2026)
 - Product page redesigned: photo gallery with thumbnails, arrows, swipe and enlarge, model-size note, tagline, colour swatches, size guide, out-of-stock sizes, tabs (Description, Materials, Specifications, Shipping & Returns), feature tiles, Style with row.
 - Store Manager: up to 5 photos per product with Upload (resized automatically) and new editing boxes for all the new sections.
