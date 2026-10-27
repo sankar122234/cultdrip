@@ -1,4 +1,4 @@
-/* cd-version:5 */
+/* cd-version:8 */
 var KEY="cd_draft",SESS="cd_ok",TRY="cd_try",TOK="cd_tok";
 var LIVE=JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS}),dirty=false,started=false,busy=false;
 function $(s){return document.querySelector(s)}
@@ -204,8 +204,8 @@ $("#ghc").onclick=function(){
   }).catch(function(e){gh(typeof e==="string"?e:"Could not reach GitHub. Check your internet connection.",true)})};
 $("#ghd").onclick=function(){if(!connected())return;if(confirm("Remove the saved token from this browser?")){clearTok();ghStatus();ui()}};
 /* ---------- site files check ---------- */
-var BUILD=5,BUILD_DATE="27 Oct 2026",WHATS_NEW="A friendlier shop: mobile menu, cart quantities, working forms, safer data handling, a 404 page and accessibility fixes.";
-var EXPECT={"index.html":3,"shop.html":3,"product.html":5,"about.html":3,"contact.html":3,"404.html":3,"admin.html":5,"style.css":5,"script.js":5,"admin.js":5};
+var BUILD=8,BUILD_DATE="27 Oct 2026",WHATS_NEW="Cart and product page restyled to a clean white layout: shipping bar, shipping & returns row, scrolling Others also bought, black buttons, wide photo.";
+var EXPECT={"index.html":3,"shop.html":3,"product.html":6,"about.html":3,"contact.html":3,"404.html":3,"admin.html":6,"style.css":8,"script.js":8,"admin.js":8};
 function checkFiles(){
   var out=$("#chkout");out.innerHTML="<li>Checking…</li>";
   if(!window.fetch){out.innerHTML="<li>This browser can't run the check.</li>";return Promise.resolve()}

@@ -1,4 +1,4 @@
-/* cd-version:5 */
+/* cd-version:8 */
 var STORE=window.STORE||{},PRODUCTS=window.PRODUCTS||[],PV="",HAS_DRAFT=false;
 if(/[?&]preview=1/.test(location.search)){PV="?preview=1";try{var dr=JSON.parse(localStorage.getItem("cd_draft")||"null");if(dr&&dr.STORE&&Array.isArray(dr.PRODUCTS)){STORE=dr.STORE;PRODUCTS=dr.PRODUCTS;HAS_DRAFT=true}}catch(e){}}
 var SHAPES={
@@ -61,12 +61,12 @@ function layout(){
    '</nav><div class="acts"><button class="btn ghost menu" id="menu" aria-expanded="false" aria-controls="nav">Menu</button><button class="btn" id="open" aria-label="Open cart">Cart <span class="count" id="count">0</span></button></div></div></header>';
   var soc=[["Instagram",STORE.instagram],["TikTok",STORE.tiktok]].filter(function(x){return /^https?:\/\//.test(x[1]||"")}).map(function(x){return '<a href="'+esc(x[1])+'" target="_blank" rel="noopener">'+x[0]+'</a>'}).join("")+(STORE.email?'<a href="mailto:'+esc(STORE.email)+'">Email us</a>':"");
   $("#site-footer").innerHTML='<footer class="foot"><div class="wrap"><span>&copy; 2026 '+esc(STORE.brand)+'</span><span>'+soc+'</span></div></footer>'+
-   '<div class="shade" id="shade"></div><aside class="drawer" id="drawer" aria-label="Shopping cart"><h2>Your cart</h2><div class="rows" id="rows"></div><div class="ship" id="ship"></div><div class="meter" id="meterwrap"><i id="bar"></i></div><p><b>Total: <span id="total"></span></b></p><div id="chkmsg" role="status"></div><button class="btn" id="checkout">Checkout</button><button class="row" id="close" style="color:inherit;border:0;margin-top:8px">Keep shopping</button></aside>';
-  $("#open").onclick=openCart;
-  $("#close").onclick=$("#shade").onclick=closeCart;
+   '<div class="shade" id="shade"></div><aside class="drawer" id="drawer" aria-label="Shopping cart"><div class="dhead"><h2>Your cart <small id="dcount"></small></h2><button class="dx" id="close" aria-label="Close cart"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></button></div><div class="meter dmeter" id="meterwrap"><i id="bar"></i></div><div class="dsub"><div class="srow"><span>Subtotal:</span><b id="subtotal"></b></div><div class="ship" id="ship"></div></div><details class="dship" id="dship"><summary>Shipping &amp; returns</summary><div id="shipinfo"></div></details><div class="rows" id="rows"></div><div class="also" id="alsowrap" hidden><h3>Others also bought</h3><div class="alsol" id="also"></div></div><div class="dfoot"><div class="srow"><b>TOTAL:</b><b id="total"></b></div><div id="chkmsg" role="status"></div><button class="btn" id="checkout">SECURE CHECKOUT <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H6a1 1 0 01-1-1v-9a1 1 0 011-1zm2 0h6V8a3 3 0 00-6 0z"/></svg></button><button class="keep" id="close2">Keep shopping</button></div></aside>';$("#open").onclick=openCart;
+  $("#close").onclick=$("#close2").onclick=$("#shade").onclick=closeCart;
   $("#checkout").onclick=checkout;
   $("#menu").onclick=function(){var n=$("#nav"),o=n.classList.toggle("open");this.setAttribute("aria-expanded",o?"true":"false")};
   $("#nav").onclick=function(e){if(e.target.tagName==="A")closeMenu()};
+  $("#also").onclick=function(e){var b=e.target.closest("button[data-add]");if(b){addToCart(+b.dataset.add,"")}};
   $("#rows").onclick=function(e){
     var b=e.target.closest("button");if(!b)return;var i=+b.dataset.i,c=cart[i];if(!c)return;
     if(b.dataset.a==="inc")c.qty=Math.min(9,c.qty+1);
@@ -80,17 +80,25 @@ if(!window.__keys){window.__keys=1;document.addEventListener("keydown",function(
 function drawCart(){
   var total=0,n=0,html="",changed=false;
   cart=cart.filter(function(c){var p=byId(c.id),ok=!!p&&p.status!=="hidden";if(!ok)changed=true;return ok});
-  cart.forEach(function(c,i){var p=byId(c.id),out=p.status==="soldout";
+  cart.forEach(function(c,i){var p=byId(c.id),out=p.status==="soldout",meta=[c.size,p.colorName].filter(Boolean).map(esc).join(" &nbsp; ");
     if(!out){total+=p.price*c.qty;n+=c.qty}
-    html+='<div class="row'+(out?' gone':'')+'"><div><a href="'+url("product.html",{id:p.id})+'">'+esc(p.name)+'</a>'+(c.size?' <small>('+esc(c.size)+')</small>':'')+'<br><small>'+(out?'Sold out, please remove':money(p.price)+(c.qty>1?' each':''))+'</small></div><div class="qty">'+
-     (out?'':'<button data-a="dec" data-i="'+i+'" aria-label="One less of '+esc(p.name)+'">&minus;</button><span>'+c.qty+'</span><button data-a="inc" data-i="'+i+'" aria-label="One more of '+esc(p.name)+'">+</button>')+'<button class="rm" data-a="rm" data-i="'+i+'">Remove</button></div></div>'});
+    html+='<div class="row crow'+(out?' gone':'')+'"><a class="cth" href="'+url("product.html",{id:p.id})+'" aria-hidden="true" tabindex="-1">'+(p.image?imgTag(p.image,p,' alt=""'):svgArt(p))+'</a><div class="cinfo"><div class="ctop"><a href="'+url("product.html",{id:p.id})+'">'+esc(p.name)+'</a><b>'+(out?'':money(p.price*c.qty))+'</b></div>'+
+     '<div class="cmeta">'+(out?'Sold out, please remove':meta)+'</div><div class="cbot"><div class="qty2">'+
+     (out?'':'<button data-a="dec" data-i="'+i+'" aria-label="One less of '+esc(p.name)+'">&minus;</button><span>'+c.qty+'</span><button data-a="inc" data-i="'+i+'" aria-label="One more of '+esc(p.name)+'">+</button>')+
+     '</div><button class="rmx" data-a="rm" data-i="'+i+'" aria-label="Remove '+esc(p.name)+' from cart" title="Remove"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></button></div></div></div>'});
   if(changed)save();
-  $("#rows").innerHTML=html||'<p>Your cart is empty. Add something you like.</p>';
-  $("#count").textContent=n;$("#total").textContent=money(total);
+  $("#rows").innerHTML=html||'<p class="cempty">Your cart is empty. Add something you like.</p>';
+  $("#count").textContent=n;$("#dcount").textContent=n?"("+n+")":"";$("#total").textContent=money(total);$("#subtotal").textContent=money(total);
   var fs=STORE.freeShip;$("#meterwrap").hidden=!fs;
   $("#ship").textContent=!fs?"":n===0?"Free shipping on orders over "+money(fs):total>=fs?"You have free shipping":"Add "+money(fs-total)+" more for free shipping";
+  $("#shipinfo").innerHTML="<p>"+esc(STORE.delivery||(fs?"Free standard delivery on orders over "+money(fs)+".":"Ask us about delivery before you buy."))+"</p><p>"+esc(STORE.returns||"Ask us about returns before you buy.")+"</p>";
   $("#bar").style.width=fs?Math.min(100,total/fs*100)+"%":"0";
   $("#checkout").disabled=n===0;if(n===0)$("#chkmsg").textContent="";
+  var inCart={};cart.forEach(function(c){inCart[c.id]=1});
+  var rec=live().filter(function(p){return p.status!=="soldout"&&!inCart[p.id]}).slice(0,6);
+  $("#alsowrap").hidden=!rec.length;
+  $("#also").innerHTML=rec.map(function(p){var link=sizeList(p).length;
+    return '<div class="amini"><a class="ath" href="'+url("product.html",{id:p.id})+'" aria-label="'+esc(p.name)+'">'+(p.image?imgTag(p.image,p,' alt=""'):svgArt(p))+'</a><div class="abot"><span>'+money(p.price)+'</span>'+(link?'<a class="aplus" href="'+url("product.html",{id:p.id})+'" aria-label="Choose size for '+esc(p.name)+'">+</a>':'<button class="aplus" data-add="'+p.id+'" aria-label="Add '+esc(p.name)+' to cart">+</button>')+'</div></div>'}).join("");
 }
 function checkout(){
   var m=$("#chkmsg"),lines=[],total=0;
@@ -155,16 +163,15 @@ function productPage(){
   $("#pcrumbs").innerHTML='<a href="'+url("index.html")+'">Home</a> / <a href="'+url("shop.html")+'">Shop</a> / <a href="'+url("shop.html",{cat:p.cat})+'">'+esc(p.cat)+'</a> / '+esc(p.name);
   var imgs=p.images.slice(),n=imgs.length||1;
   /* left: vertical thumbnails + large image */
-  var gal='<div class="gal">'+(n>1?'<div class="thumbs" id="thumbs">'+imgs.map(function(s,k){return '<button type="button" aria-label="Show photo '+(k+1)+' of '+n+'">'+imgTag(s,p,' alt=""')+'</button>'}).join("")+'</div>':'')+
+  var gal='<div class="gal'+(n>1?'':' one')+'">'+(n>1?'<div class="thumbs" id="thumbs">'+imgs.map(function(s,k){return '<button type="button" aria-label="Show photo '+(k+1)+' of '+n+'">'+imgTag(s,p,' alt=""')+'</button>'}).join("")+'</div>':'')+
     '<div class="stage" id="stage" tabindex="0" aria-roledescription="carousel" aria-label="Product photos"><div class="big" id="bigimg"></div>'+
     (n>1?'<button class="gnav prev" id="gprev" aria-label="Previous photo">&#8249;</button><button class="gnav next" id="gnext" aria-label="Next photo">&#8250;</button><div class="dots" id="dots" aria-hidden="true">'+imgs.map(function(){return '<i></i>'}).join("")+'</div>':'')+
     '<span class="gcount" id="gcount" aria-live="polite"></span></div></div>';
   /* right: stacked panels */
   var sibs=p.group?live().filter(function(x){return x.group&&x.group.toLowerCase()===p.group.toLowerCase()}):[];
-  var head='<section class="pnl"><h1>'+esc(p.name)+'</h1><div class="price big"><b>'+money(p.price)+'</b>'+(sale?'<s><span class="sr">Was </span>'+money(p.was)+'</s> <span class="off">-'+Math.round((1-p.price/p.was)*100)+'%</span>':'')+'</div>'+
+  var head='<section class="pnl"><h1>'+esc(p.name)+'</h1><div class="price pbig"><b>'+money(p.price)+'</b>'+(sale?'<s><span class="sr">Was </span>'+money(p.was)+'</s> <span class="off">-'+Math.round((1-p.price/p.was)*100)+'%</span>':'')+'</div>'+
     (p.tagline?'<p class="tagline">'+esc(p.tagline)+'</p>':'')+(out?'<p class="soldnote">This piece has sold out.</p>':(p.tag?'<p class="ptag">'+esc(p.tag)+'</p>':''))+'</section>';
-  var col=sibs.length>1?'<section class="pnl colours"><b>Colour <small>'+sibs.length+'</small> <span>'+esc(p.colorName||"")+'</span></b><div class="swl">'+sibs.map(function(x){return '<a href="'+url("product.html",{id:x.id})+'" class="'+(x.id===p.id?'cur':'')+'" title="'+esc(x.colorName||x.name)+'" aria-label="'+esc(x.colorName||x.name)+(x.id===p.id?' (selected)':'')+'"'+(x.id===p.id?' aria-current="true"':'')+'>'+(x.image?'<img src="'+esc(x.image)+'" alt="">':'<i style="background:'+esc(x.color)+'"></i>')+'</a>'}).join("")+'</div></section>':
-    '<section class="pnl colours"><b>Colour <span>'+esc(p.colorName||"")+'</span></b><div class="swl"><a class="cur" aria-label="'+esc(p.colorName||"Colour")+'"><i style="background:'+esc(p.color)+'"></i></a></div></section>';
+  var col=sibs.length>1?'<section class="pnl colours"><b>Colour <small>'+sibs.length+'</small> <span>'+esc(p.colorName||"")+'</span></b><div class="swl">'+sibs.map(function(x){return '<a href="'+url("product.html",{id:x.id})+'" class="'+(x.id===p.id?'cur':'')+'" title="'+esc(x.colorName||x.name)+'" aria-label="'+esc(x.colorName||x.name)+(x.id===p.id?' (selected)':'')+'"'+(x.id===p.id?' aria-current="true"':'')+'>'+(x.image?'<img src="'+esc(x.image)+'" alt="">':'<i style="background:'+esc(x.color)+'"></i>')+'</a>'}).join("")+'</div></section>':'';
   var sg=rows(p.sizeGuide);
   var notify=sold.length?(STORE.email?'<a href="mailto:'+esc(STORE.email)+'?subject='+encodeURIComponent("Notify me: "+p.name)+'">Size not in stock?</a>':'<a href="'+url("contact.html")+'">Size not in stock?</a>'):'';
   var sz=sizes.length?'<section class="pnl"><div class="szhead"><b id="szlab">Size</b>'+notify+'</div><div class="sizes" id="sizes" role="group" aria-labelledby="szlab">'+sizes.map(function(s){var no=out||sold.indexOf(s)>-1;return '<button type="button" aria-pressed="false"'+(no?' disabled class="na" title="Out of stock"':'')+'>'+esc(s)+'</button>'}).join("")+'</div><small id="szmsg" role="alert"></small>'+
@@ -211,7 +218,7 @@ function productPage(){
   var fs=$("#findsize");if(fs)fs.onclick=openGuide;var sgl=$("#sgl");if(sgl)sgl.onclick=openGuide;
   /* sticky buy bar */
   if(!out){var bar=document.createElement("div");bar.className="stickybar";bar.hidden=true;
-    bar.innerHTML=(sibs.length>1?'<label>Colour<select id="scol">'+sibs.map(function(x){return '<option value="'+x.id+'"'+(x.id===p.id?' selected':'')+'>'+esc(x.colorName||x.name)+'</option>'}).join("")+'</select></label>':'<span class="sc">'+esc(p.colorName||p.name)+'</span>')+
+    bar.innerHTML=(sibs.length>1?'<label>Colour<select id="scol">'+sibs.map(function(x){return '<option value="'+x.id+'"'+(x.id===p.id?' selected':'')+'>'+esc(x.colorName||x.name)+'</option>'}).join("")+'</select></label>':'<span class="sc">'+esc(p.name)+'</span>')+
       (sizes.length?'<label>Size<select id="ssize"><option value="">Select</option>'+sizes.map(function(s){return '<option'+(sold.indexOf(s)>-1?' disabled':'')+'>'+esc(s)+'</option>'}).join("")+'</select></label>':'')+
       '<button class="btn" id="sbuy">Add to cart <b>'+money(p.price)+'</b></button>';
     document.body.appendChild(bar);
