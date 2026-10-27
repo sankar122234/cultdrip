@@ -1,4 +1,4 @@
-/* cd-version:3 */
+/* cd-version:4 */
 var KEY="cd_draft",SESS="cd_ok",TRY="cd_try",TOK="cd_tok";
 var LIVE=JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS}),dirty=false,started=false,busy=false;
 function $(s){return document.querySelector(s)}
@@ -109,14 +109,54 @@ function title(p,i){
   var sale=+p.was>+p.price;
   return (i+1)+'. '+esc(p.name||"New product")+' <span class="chip">'+money(p.price)+(sale?' · was '+money(p.was)+' · -'+Math.round((1-p.price/p.was)*100)+'%':'')+'</span>'}
 function head(i){var el=$("#h"+i);if(el)el.innerHTML=title(PRODUCTS[i],i)}
+var PREV={};
+function area(i,k,label,v,hint,rows){return '<label class="wide">'+label+'<textarea data-i="'+i+'" data-k="'+k+'" rows="'+(rows||3)+'" placeholder="'+esc(hint||"")+'">'+esc(v||"")+'</textarea></label>'}
+function imgs(p){if(!Array.isArray(p.images))p.images=p.image?[p.image]:[];return p.images}
+function photoBlock(p,i){
+  var im=imgs(p),h='<div class="photos"><b>Photos (up to 5)</b><p class="hint">The first photo is the main one. Use Upload to add a picture from your computer, or type a path such as images/hoodie-1.jpg.</p><div class="pslots">';
+  for(var n=0;n<5;n++){var src=im[n]||"",pv=PREV[src]||src;
+    h+='<div class="pslot"><div class="pthumb">'+(src?'<img src="'+esc(pv)+'" alt="Photo '+(n+1)+'">':'<span>'+(n+1)+'</span>')+'</div>'+
+      '<input type="text" data-photo="1" data-i="'+i+'" data-n="'+n+'" value="'+esc(src)+'" placeholder="images/..." aria-label="Photo '+(n+1)+' path">'+
+      '<div class="pbtn"><button type="button" data-a="up_img" data-i="'+i+'" data-n="'+n+'">Upload</button>'+(src?'<button type="button" data-a="rm_img" data-i="'+i+'" data-n="'+n+'">Remove</button>':'')+'</div></div>'}
+  return h+'</div><input type="file" id="pf" accept="image/*" hidden></div>'}
 function drawProd(){
   $("#list").innerHTML=PRODUCTS.map(function(p,i){
-    return '<div class="prow"><div class="ptop"><b id="h'+i+'">'+title(p,i)+'</b><span><button data-a="up" data-i="'+i+'">Up</button><button data-a="down" data-i="'+i+'">Down</button><button data-a="dup" data-i="'+i+'">Copy</button><button class="del" data-a="del" data-i="'+i+'">Delete</button></span></div><div class="fields">'+
-    fld(i,"name","Name","text",p.name)+fld(i,"cat","Category","text",p.cat)+sel(i,"type","Drawing shape",TYPES,p.type)+
+    return '<div class="prow"><div class="ptop"><b id="h'+i+'">'+title(p,i)+'</b><span><button data-a="up" data-i="'+i+'">Up</button><button data-a="down" data-i="'+i+'">Down</button><button data-a="dup" data-i="'+i+'">Copy</button><button class="del" data-a="del" data-i="'+i+'">Delete</button></span></div>'+
+    '<h4>Basics</h4><div class="fields">'+
+    fld(i,"name","Name","text",p.name)+fld(i,"cat","Category","text",p.cat)+sel(i,"type","Drawing shape (shown if no photo)",TYPES,p.type)+
     nfld('data-i="'+i+'" data-k="price"',"Price",p.price)+nfld('data-i="'+i+'" data-k="was"',"Original price (0 = no sale)",p.was)+
-    fld(i,"color","Color","color",p.color)+sel(i,"status","Status",STAT,p.status)+sel(i,"tag","Badge",TAGS,p.tag)+fld(i,"image","Photo path (optional)","text",p.image)+fld(i,"sizes","Sizes, comma separated (blank = none)","text",p.sizes===undefined?"S,M,L,XL":p.sizes)+fld(i,"desc","Description","text",p.desc||"")+'</div></div>'}).join("")}
+    fld(i,"color","Colour","color",p.color)+sel(i,"status","Status",STAT,p.status)+sel(i,"tag","Badge",TAGS,p.tag)+'</div>'+
+    '<h4>Photos</h4>'+photoBlock(p,i)+
+    '<h4>Product page</h4><div class="fields">'+
+    fld(i,"tagline","Short tagline under the name","text",p.tagline||"")+fld(i,"modelNote","Model note (e.g. Model is 183cm, wearing M)","text",p.modelNote||"")+
+    fld(i,"sizes","Sizes, comma separated (blank = none)","text",p.sizes===undefined?"S,M,L,XL":p.sizes)+fld(i,"soldSizes","Sizes out of stock, comma separated","text",p.soldSizes||"")+
+    fld(i,"colorName","Colour name (e.g. Ash Grey)","text",p.colorName||"")+fld(i,"group","Colour group (same word on each colour of one item)","text",p.group||"")+'</div>'+
+    '<div class="fields">'+area(i,"desc","Description",p.desc,"A few sentences about the piece",4)+area(i,"materials","Materials (one per line)",p.materials,"80% cotton\n20% polyester")+
+    area(i,"specs","Specifications (one per line)",p.specs,"Oversized fit\nBrushed fleece inside")+area(i,"features","Feature tiles, up to 3 (one per line: Title | detail)",p.features,"4-way stretch | Moves with you")+
+    area(i,"sizeGuide","Size guide table (one row per line, columns split by |)",p.sizeGuide,"Size | Chest | Length\nS | 52cm | 68cm\nM | 55cm | 70cm",5)+'</div></div>'}).join("")}
+function resizeImage(file,cb){
+  var r=new FileReader();r.onerror=function(){cb(null)};
+  r.onload=function(){var im=new Image();im.onerror=function(){cb(null)};im.onload=function(){
+    var m=1600,sc=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);
+    var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.85))};im.src=r.result};
+  r.readAsDataURL(file)}
+function uploadPhoto(i,n){
+  if(!connected()){say("Add your GitHub token first (GitHub connection box) so photos can be uploaded, or type a path instead.",9000);return}
+  var inp=$("#pf");inp.value="";inp.onchange=function(){var f=inp.files[0];if(!f)return;
+    if(!/^image\//.test(f.type)){say("That isn't a picture file.",6000);return}
+    say("Preparing photo…",20000);
+    resizeImage(f,function(url){
+      if(!url){say("Couldn't read that picture. Try a JPG or PNG.",7000);return}
+      var p=PRODUCTS[i],name="images/"+p.id+"-"+(n+1)+"-"+Date.now().toString(36)+".jpg",r=ghRepo();
+      say("Uploading photo…",30000);
+      api("/repos/"+r.owner+"/"+r.repo+"/contents/"+name,{method:"PUT",body:JSON.stringify({message:"Add product photo",content:url.split(",")[1],branch:r.branch})})
+       .then(function(res){if(!res.ok)throw res;PREV[name]=url;var im=imgs(p).slice();while(im.length<n)im.push("");im[n]=name;p.images=im.filter(Boolean).slice(0,5);p.image=p.images[0]||"";mark();drawProd();say("Photo uploaded. It can take a minute or two to appear on the live shop. Press Save & publish to use it.",12000)})
+       .catch(function(e){say("Photo NOT uploaded: "+ghErr(e),12000)})})};
+  inp.click()}
 document.addEventListener("input",function(e){
-  var t=e.target;if(!t.dataset||!(t.dataset.s||t.dataset.k))return;
+  var t=e.target;
+  if(t.dataset&&t.dataset.photo){var p=PRODUCTS[+t.dataset.i],im=imgs(p).slice();while(im.length<5)im.push("");im[+t.dataset.n]=t.value.trim();p.images=im.filter(Boolean).slice(0,5);p.image=p.images[0]||"";mark();return}
+  if(!t.dataset||!(t.dataset.s||t.dataset.k))return;
   var v=t.dataset.num?num(t.value):t.value;
   if(t.dataset.s){STORE[t.dataset.s]=v;mark()}
   else{var i=+t.dataset.i;PRODUCTS[i][t.dataset.k]=v;mark();head(i)}
@@ -125,6 +165,8 @@ document.addEventListener("change",function(e){var t=e.target;if(t.dataset&&t.da
 document.addEventListener("focusin",function(e){var t=e.target;if(t.dataset&&t.dataset.num)t.select()});
 $("#list").addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b)return;var i=+b.dataset.i,a=b.dataset.a;
+  if(a==="up_img"){uploadPhoto(i,+b.dataset.n);return}
+  if(a==="rm_img"){var im=imgs(PRODUCTS[i]).slice();im.splice(+b.dataset.n,1);PRODUCTS[i].images=im;PRODUCTS[i].image=im[0]||"";mark();drawProd();return}
   if(a==="del"){if(!confirm("Delete this product?"))return;PRODUCTS.splice(i,1)}
   if(a==="dup"){var c=JSON.parse(JSON.stringify(PRODUCTS[i]));c.id=nextId();c.name+=" copy";PRODUCTS.splice(i+1,0,c)}
   if(a==="up"&&i>0){PRODUCTS.splice(i-1,0,PRODUCTS.splice(i,1)[0])}
@@ -134,7 +176,7 @@ $("#list").addEventListener("click",function(e){
 function nextId(){return PRODUCTS.reduce(function(m,p){return Math.max(m,p.id)},0)+1}
 function pct(){return Math.min(90,Math.max(1,num($("#pct").value)))}
 function r2(n){return Math.round(n*100)/100}
-$("#add").onclick=function(){PRODUCTS.unshift({id:nextId(),name:"New product",type:"tee",cat:"Tees",price:50,was:0,color:"#227d47",image:"",status:"live",tag:"New",sizes:"S,M,L,XL",desc:""});mark();drawProd();window.scrollTo(0,$("#list").offsetTop-80)};
+$("#add").onclick=function(){PRODUCTS.unshift({id:nextId(),name:"New product",type:"tee",cat:"Tees",price:50,was:0,color:"#227d47",image:"",images:[],status:"live",tag:"New",sizes:"S,M,L,XL",desc:""});mark();drawProd();window.scrollTo(0,$("#list").offsetTop-80)};
 $("#sale").onclick=function(){PRODUCTS.forEach(function(p){var base=+p.was>+p.price?+p.was:+p.price;p.was=base;p.price=r2(base*(1-pct()/100))});mark();drawProd();say("Sale applied: press Save & publish")};
 $("#unsale").onclick=function(){PRODUCTS.forEach(function(p){if(+p.was>+p.price)p.price=+p.was;p.was=0});mark();drawProd();say("Sales ended: press Save & publish")};
 $("#up").onclick=function(){PRODUCTS.forEach(function(p){p.price=r2(p.price*(1+pct()/100));if(p.was)p.was=r2(p.was*(1+pct()/100))});mark();drawProd()};
@@ -162,8 +204,8 @@ $("#ghc").onclick=function(){
   }).catch(function(e){gh(typeof e==="string"?e:"Could not reach GitHub. Check your internet connection.",true)})};
 $("#ghd").onclick=function(){if(!connected())return;if(confirm("Remove the saved token from this browser?")){clearTok();ghStatus();ui()}};
 /* ---------- site files check ---------- */
-var BUILD=3,BUILD_DATE="27 Oct 2026",WHATS_NEW="A friendlier shop: mobile menu, cart quantities, working forms, safer data handling, a 404 page and accessibility fixes.";
-var EXPECT={"index.html":3,"shop.html":3,"product.html":3,"about.html":3,"contact.html":3,"404.html":3,"admin.html":3,"style.css":3,"script.js":3,"admin.js":3};
+var BUILD=4,BUILD_DATE="27 Oct 2026",WHATS_NEW="A friendlier shop: mobile menu, cart quantities, working forms, safer data handling, a 404 page and accessibility fixes.";
+var EXPECT={"index.html":3,"shop.html":3,"product.html":4,"about.html":3,"contact.html":3,"404.html":3,"admin.html":4,"style.css":4,"script.js":4,"admin.js":4};
 function checkFiles(){
   var out=$("#chkout");out.innerHTML="<li>Checking…</li>";
   if(!window.fetch){out.innerHTML="<li>This browser can't run the check.</li>";return Promise.resolve()}
