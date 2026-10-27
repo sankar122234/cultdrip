@@ -6,7 +6,7 @@ var STORE = {
   "heroText": "Limited-run streetwear in heavy fabric. Small drops, no restocks.",
   "shopTitle": "The Drop",
   "currency": "$",
-  "freeShip": 45
+  "freeShip": 95
 };
 var PRODUCTS = [
   {
