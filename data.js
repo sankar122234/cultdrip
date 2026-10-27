@@ -66,7 +66,7 @@ var PRODUCTS = [
     "was": 0,
     "color": "#c9b8ff",
     "image": "",
-    "status": "live",
+    "status": "soldout",
     "tag": "",
     "images": []
   },
@@ -79,7 +79,7 @@ var PRODUCTS = [
     "was": 0,
     "color": "#d9d2c0",
     "image": "",
-    "status": "live",
+    "status": "soldout",
     "tag": "New",
     "images": []
   },
@@ -92,7 +92,7 @@ var PRODUCTS = [
     "was": 0,
     "color": "#2433ff",
     "image": "",
-    "status": "live",
+    "status": "soldout",
     "tag": "",
     "images": []
   },
@@ -105,7 +105,7 @@ var PRODUCTS = [
     "was": 0,
     "color": "#111111",
     "image": "",
-    "status": "live",
+    "status": "soldout",
     "tag": "",
     "images": []
   },
@@ -118,7 +118,7 @@ var PRODUCTS = [
     "was": 0,
     "color": "#d6001c",
     "image": "",
-    "status": "live",
+    "status": "soldout",
     "tag": "Best seller",
     "images": []
   }
