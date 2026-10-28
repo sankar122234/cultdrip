@@ -6,7 +6,9 @@ var STORE = {
   "heroText": "Limited-run streetwear in heavy fabric. Small drops, no restocks.",
   "shopTitle": "The Drop",
   "currency": "$",
-  "freeShip": 95
+  "freeShip": 95,
+  "orderEmail": "ITSMESANKAR10@GMAIL.COM",
+  "instagram": "https://www.instagram.com/sankar.raju_?xtok=M29jYjFjdnlqZmcz&utm_source=qr"
 };
 var PRODUCTS = [
   {
