@@ -1,4 +1,4 @@
-/* cd-version:10 */
+/* cd-version:11 */
 var KEY="cd_draft",SESS="cd_ok",TRY="cd_try",TOK="cd_tok";
 var LIVE=JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS}),dirty=false,started=false,busy=false;
 function $(s){return document.querySelector(s)}
@@ -9,14 +9,14 @@ function rm(k){try{localStorage.removeItem(k)}catch(e){}}
 function sget(k){try{return sessionStorage.getItem(k)}catch(e){return null}}
 function sput(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}
 function srm(k){try{sessionStorage.removeItem(k)}catch(e){}}
-function num(v){var n=parseFloat(String(v).replace(",","."));return isNaN(n)?0:n}
-function money(n){n=+n||0;return (STORE.currency||"$")+(n%1===0?n:n.toFixed(2))}
+function num(v){var t=String(v).trim().replace(/[^\d.,\-]/g,"");if(/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(t))t=t.replace(/,/g,"");else t=t.replace(",",".");var n=parseFloat(t);if(!isFinite(n))return 0;n=Math.round(n*100)/100;return Math.max(-100000,Math.min(100000,n))}
+function money(n){n=+n||0;return esc(STORE.currency||"$")+(n%1===0?n:n.toFixed(2))}
 /* ---------- GitHub ---------- */
 var GH_DEFAULT={owner:"sankar122234",repo:"cultdrip",branch:"main",path:"data.js"};
 function ghRepo(){var h=location.hostname,p=location.pathname.split("/")[1];
   if(/\.github\.io$/.test(h)&&p&&p.indexOf(".")<0)return {owner:h.split(".")[0],repo:p,branch:"main",path:"data.js"};
   return GH_DEFAULT}
-function parseData(text){var m=String(text).match(/var STORE\s*=\s*([\s\S]*?);\s*var PRODUCTS\s*=\s*([\s\S]*?);\s*$/);if(!m)return null;try{return{STORE:JSON.parse(m[1]),PRODUCTS:JSON.parse(m[2])}}catch(e){return null}}
+function parseData(text){text=String(text);if(text.length>2000000)return null;var m=text.match(/^\s*(?:\/\*[\s\S]*?\*\/\s*)?var STORE\s*=/);var a=text.indexOf('var STORE'),b=text.indexOf(';\nvar PRODUCTS');if(b<0)b=text.search(/;\s*var PRODUCTS\s*=/);if(a<0||b<0)return null;var sTxt=text.slice(a).replace(/^var STORE\s*=\s*/,'').slice(0,b-a-(text.slice(a).match(/^var STORE\s*=\s*/)||[''])[0].length);var rest=text.slice(b).replace(/^;\s*var PRODUCTS\s*=\s*/,'').replace(/;\s*$/,'');try{return{STORE:JSON.parse(sTxt),PRODUCTS:JSON.parse(rest)}}catch(e){return null}}
 function tok(){return get(TOK)||sget(TOK)}
 function setTok(t){try{localStorage.setItem(TOK,t);srm(TOK)}catch(e){sput(TOK,t)}}
 function clearTok(){rm(TOK);srm(TOK)}
@@ -61,16 +61,16 @@ function derive(pass,salt,iter){
 function download(name,text){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/javascript"}));a.download=name;a.click()}
 function gate(){
   $("#gate").hidden=false;
-  if(typeof ADMIN_LOCK!=="undefined"&&ADMIN_LOCK){if(sget(SESS)==="1")return open();$("#g-lock").hidden=false;$("#pw").focus()}
+  if(typeof ADMIN_LOCK!=="undefined"&&ADMIN_LOCK){if(sget(SESS)==="1")return openApp();$("#g-lock").hidden=false;$("#pw").focus()}
   else $("#g-setup").hidden=false;
 }
-function open(){$("#gate").hidden=true;$("#app").hidden=false;start()}
+function openApp(){$("#gate").hidden=true;$("#app").hidden=false;start()}
 $("#unlock").onclick=function(){
   var m=$("#gmsg"),t={n:0,until:0};try{t=JSON.parse(get(TRY))||t}catch(e){}
   if(t.until>Date.now()){m.textContent="Too many tries. Wait "+Math.ceil((t.until-Date.now())/60000)+" minute(s).";return}
   if(!(window.crypto&&crypto.subtle)){m.textContent="This browser can't check passcodes here. Open the site over https.";return}
   derive($("#pw").value,ADMIN_LOCK.salt,ADMIN_LOCK.iter).then(function(h){
-    if(h===ADMIN_LOCK.hash){put(TRY,"{}");sput(SESS,"1");open()}
+    if(h===ADMIN_LOCK.hash){put(TRY,"{}");sput(SESS,"1");openApp()}
     else{t.n=(t.n||0)+1;if(t.n>=5){t.until=Date.now()+300000;t.n=0;m.textContent="Too many tries. Locked for 5 minutes."}else m.textContent="Wrong passcode. "+(5-t.n)+" tries left.";put(TRY,JSON.stringify(t));$("#pw").value=""}
   })};
 $("#pw").onkeydown=function(e){if(e.key==="Enter")$("#unlock").click()};
@@ -85,10 +85,10 @@ $("#mk").onclick=function(){
     sput(SESS,"1");
     if(started){$("#gate").hidden=true;$("#app").hidden=false;say("lock.js downloaded. Upload it to GitHub to switch the new passcode on.",10000)}
     else{m.textContent="Downloaded lock.js. Upload it to GitHub to switch the lock on.";setTimeout(open,1200)}})};
-$("#skip").onclick=function(){if(started){$("#gate").hidden=true;$("#app").hidden=false}else open()};
+$("#skip").onclick=function(){if(started){$("#gate").hidden=true;$("#app").hidden=false}else openApp()};
 $("#chpw").onclick=function(){$("#app").hidden=true;$("#gate").hidden=false;$("#g-lock").hidden=true;$("#g-setup").hidden=false};
 /* ---------- editor ---------- */
-var SET=[["brand","Brand name","text"],["announce","Top banner message","text"],["heroTitle","Home headline","text"],["heroText","Home sub-text","text"],["shopTitle","Shop page title","text"],["currency","Currency symbol","text"],["freeShip","Free shipping over","num"],["delivery","Delivery info (product page)","text"],["returns","Returns info (product page)","text"],["perks","Info lines under the sizes on every product (one per line, e.g. Free shipping over $300)","area"],["orderEmail","Order & contact email (orders and messages go here)","text"],["formUrl","Form address for sign-ups and messages (optional, a https link from a service like Formspree)","text"],["instagram","Instagram link or @handle","text"],["tiktok","TikTok link or @handle","text"]];
+var SET=[["brand","Brand name","text"],["announce","Top banner message","text"],["heroTitle","Home headline","text"],["heroText","Home sub-text","text"],["shopTitle","Shop page title","text"],["currency","Currency symbol","text"],["freeShip","Free shipping over","num"],["delivery","Delivery info (product page)","text"],["returns","Returns info (product page)","text"],["priceNote","Price note shown under prices (e.g. Prices in AUD, GST included)","text"],["privacy","Privacy policy (shown on the Help page, one paragraph per line)","area"],["terms","Terms of sale (shown on the Help page, one paragraph per line)","area"],["perks","Info lines under the sizes on every product (one per line, e.g. Free shipping over $300)","area"],["orderEmail","Order & contact email (orders and messages go here)","text"],["formUrl","Form address for sign-ups and messages (optional, a https link from a service like Formspree)","text"],["instagram","Instagram link or @handle","text"],["tiktok","TikTok link or @handle","text"]];
 var TYPES=["hoodie","tee","pants","cap"],STAT=[["live","On sale now"],["soldout","Sold out"],["hidden","Hidden"]],TAGS=[["","No badge"],["New","New"],["Limited","Limited"],["Best seller","Best seller"]];
 function say(m,ms){var s=$("#status");s.textContent=m;clearTimeout(say.t);say.t=setTimeout(function(){s.textContent=""},ms||3500)}
 function ui(){
@@ -99,9 +99,13 @@ function mark(){dirty=true;ui()}
 function writeDraft(){try{localStorage.setItem(KEY,JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS,base:LIVE}));return true}catch(e){return false}}
 function commit(){
   if(!writeDraft()){say("Could not save in this browser",6000);return}
+  var bad=PRODUCTS.filter(function(p){return p.status==="live"&&!(+p.price>0)}).map(function(p){return p.name||"New product"});
+  if(bad.length){say("NOT published: give these a price above 0, or set Status to Hidden: "+bad.slice(0,3).join(", ")+(bad.length>3?"...":""),15000);return}
+  var fresh=PRODUCTS.filter(function(p){return p.status==="live"&&/^new product( copy)?$/i.test(String(p.name||"").trim())}).length;
+  if(fresh&&!confirm("You still have "+fresh+" product(s) named \"New product\". Publish anyway?"))return
   if(!connected()){say("Saved in this browser only. Add your GitHub token above to publish to the live shop.",9000);return}
   busy=true;ui();say("Publishing to your live shop…",30000);
-  publish().then(function(){dirty=false;LIVE=JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS});writeDraft();say("Published at "+new Date().toLocaleTimeString()+". Your live shop is updating now.",9000)})
+  var sent=code();publish().then(function(){if(code()===sent){dirty=false;LIVE=JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS});writeDraft();say("Published at "+new Date().toLocaleTimeString()+". Your live shop is updating now.",9000)}else say("Published, but you changed something while it was saving. Press Save & publish again to send the newest changes.",12000)})
    .catch(function(e){try{console.error("publish failed",e)}catch(x){}say("NOT published: "+ghErr(e),12000)})
    .then(function(){busy=false;ui()})}
 function opts(list,cur){return list.map(function(o){var v=o instanceof Array?o[0]:o,l=o instanceof Array?o[1]:o;return '<option value="'+esc(v)+'"'+(v===cur?' selected':'')+'>'+esc(l)+'</option>'}).join("")}
@@ -134,7 +138,7 @@ function drawProd(){
     '<h4>Photos</h4>'+photoBlock(p,i)+
     '<h4>Product page</h4><div class="fields">'+
     fld(i,"tagline","Short tagline under the name","text",p.tagline||"")+fld(i,"modelNote","Model note (e.g. Model is 183cm, wearing M)","text",p.modelNote||"")+
-    fld(i,"sizes","Sizes, comma separated (blank = none)","text",p.sizes===undefined?"S,M,L,XL":p.sizes)+fld(i,"soldSizes","Sizes out of stock, comma separated","text",p.soldSizes||"")+
+    fld(i,"sizes","Sizes, comma separated (blank = none)","text",p.sizes===undefined?(p.type==="cap"?"":"S,M,L,XL"):p.sizes)+fld(i,"soldSizes","Sizes out of stock, comma separated","text",p.soldSizes||"")+
     fld(i,"colorName","Colour name (e.g. Ash Grey)","text",p.colorName||"")+fld(i,"group","Colour group (same word on each colour of one item)","text",p.group||"")+'</div>'+
     '<div class="fields">'+area(i,"desc","Description",p.desc,"A few sentences about the piece",4)+area(i,"materials","Materials (one per line)",p.materials,"80% cotton\n20% polyester")+
     area(i,"specs","Specifications (one per line)",p.specs,"Oversized fit\nBrushed fleece inside")+area(i,"features","Feature tiles, up to 3 (one per line: Title | detail | photo path, photo optional)",p.features,"4-way stretch | Moves with you | images/stretch.jpg")+area(i,"performance","Performance scores out of 5, up to 3 (one per line: Name | score | note)",p.performance,"Stretch | 4 | Cotton elastane\nInsulation | 3.5 | Cotton rich blend")+
@@ -160,7 +164,7 @@ function uploadPhoto(i,n){
   inp.click()}
 document.addEventListener("input",function(e){
   var t=e.target;
-  if(t.dataset&&t.dataset.photo){var p=PRODUCTS[+t.dataset.i],im=imgs(p).slice();while(im.length<5)im.push("");im[+t.dataset.n]=t.value.trim();p.images=im.filter(Boolean).slice(0,5);p.image=p.images[0]||"";mark();return}
+  if(t.dataset&&t.dataset.photo){var p=PRODUCTS[+t.dataset.i],im=imgs(p).slice();while(im.length<5)im.push("");im[+t.dataset.n]=t.value.trim();while(im.length&&!im[im.length-1])im.pop();p.images=im.slice(0,5);p.image=p.images.filter(Boolean)[0]||"";mark();return}
   if(!t.dataset||!(t.dataset.s||t.dataset.k))return;
   var v=t.dataset.num?num(t.value):t.value;
   if(t.dataset.s){STORE[t.dataset.s]=v;mark()}
@@ -186,7 +190,7 @@ $("#sale").onclick=function(){PRODUCTS.forEach(function(p){var base=+p.was>+p.pr
 $("#unsale").onclick=function(){PRODUCTS.forEach(function(p){if(+p.was>+p.price)p.price=+p.was;p.was=0});mark();drawProd();say("Sales ended: press Save & publish")};
 $("#up").onclick=function(){PRODUCTS.forEach(function(p){p.price=r2(p.price*(1+pct()/100));if(p.was)p.was=r2(p.was*(1+pct()/100))});mark();drawProd()};
 $("#down").onclick=function(){PRODUCTS.forEach(function(p){p.price=r2(p.price*(1-pct()/100));if(p.was)p.was=r2(p.was*(1-pct()/100))});mark();drawProd()};
-function code(){return "/* Made by the Store Manager. */\nvar STORE = "+JSON.stringify(STORE,null,2)+";\nvar PRODUCTS = "+JSON.stringify(PRODUCTS,null,2)+";\n"}
+function code(){var P=PRODUCTS.map(function(p){var q=Object.assign({},p);if(Array.isArray(q.images))q.images=q.images.filter(Boolean);return q});return "/* Made by the Store Manager. */\nvar STORE = "+JSON.stringify(STORE,null,2)+";\nvar PRODUCTS = "+JSON.stringify(P,null,2)+";\n"}
 $("#saveb").onclick=commit;
 $("#prev").onclick=function(){
   if(!writeDraft()){say("Could not prepare the preview",6000);return}
@@ -225,8 +229,8 @@ $("#ghc").onclick=function(){
   }).catch(function(e){gh(typeof e==="string"?e:"Could not reach GitHub. Check your internet connection.",true)})};
 $("#ghd").onclick=function(){if(!connected())return;if(confirm("Remove the saved token from this browser?")){clearTok();ghStatus();ui()}};
 /* ---------- site files check ---------- */
-var BUILD=10,BUILD_DATE="27 Oct 2026",WHATS_NEW="Cart and product page restyled to a clean white layout, plus clearer GitHub connection errors.";
-var EXPECT={"index.html":3,"shop.html":3,"product.html":6,"about.html":3,"contact.html":3,"404.html":3,"admin.html":6,"style.css":8,"script.js":8,"admin.js":10};
+var BUILD=11,BUILD_DATE="27 Oct 2026",WHATS_NEW="Audit fixes: footer and Help page, one-size caps, two-column phone shop, filters kept in the address, keyboard-safe cart, notify-me on sold-out items, price checks, share-preview tags.";
+var EXPECT={"index.html":5,"shop.html":5,"product.html":7,"about.html":4,"contact.html":5,"404.html":4,"help.html":4,"admin.html":7,"style.css":11,"script.js":11,"admin.js":11};
 function checkFiles(){
   var out=$("#chkout");out.innerHTML="<li>Checking…</li>";
   if(!window.fetch){out.innerHTML="<li>This browser can't run the check.</li>";return Promise.resolve()}
