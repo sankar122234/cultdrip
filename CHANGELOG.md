@@ -7,6 +7,9 @@ Each time new files are sent, the version number goes up by one. The Store Manag
 2. Click Commit changes, wait two minutes, then hard-refresh with Ctrl+Shift+R.
 3. Open the Store Manager, then Site files check. Everything should show a tick.
 
+## Version 12 (28 Oct 2026)
+- Removed the Colour picker from each product in the Store Manager. Colour name and Colour group are still there for items that come in several colours. Only admin.js changes: upload admin.js (and CHANGELOG.md).
+
 ## Version 11 (28 Oct 2026)
 Built from the full site audit, then tested in 162 browser/device/page combinations and reviewed separately by five independent reviewers (phone shopper, accessibility, QA breaker, design critic, security).
 - New **Help page** (help.html) with Shipping, Returns, Privacy and Terms. A proper 4-column footer links to it. New Store Manager boxes: Privacy, Terms, and a small "price note" (for example "Prices in AUD, GST included").

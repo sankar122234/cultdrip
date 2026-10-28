@@ -1,4 +1,4 @@
-/* cd-version:11 */
+/* cd-version:12 */
 var KEY="cd_draft",SESS="cd_ok",TRY="cd_try",TOK="cd_tok";
 var LIVE=JSON.stringify({STORE:STORE,PRODUCTS:PRODUCTS}),dirty=false,started=false,busy=false;
 function $(s){return document.querySelector(s)}
@@ -134,7 +134,7 @@ function drawProd(){
     '<h4>Basics</h4><div class="fields">'+
     fld(i,"name","Name","text",p.name)+fld(i,"cat","Category","text",p.cat)+sel(i,"type","Drawing shape (shown if no photo)",TYPES,p.type)+
     nfld('data-i="'+i+'" data-k="price"',"Price",p.price)+nfld('data-i="'+i+'" data-k="was"',"Original price (0 = no sale)",p.was)+
-    fld(i,"color","Colour","color",p.color)+sel(i,"status","Status",STAT,p.status)+sel(i,"tag","Badge",TAGS,p.tag)+'</div>'+
+    sel(i,"status","Status",STAT,p.status)+sel(i,"tag","Badge",TAGS,p.tag)+'</div>'+
     '<h4>Photos</h4>'+photoBlock(p,i)+
     '<h4>Product page</h4><div class="fields">'+
     fld(i,"tagline","Short tagline under the name","text",p.tagline||"")+fld(i,"modelNote","Model note (e.g. Model is 183cm, wearing M)","text",p.modelNote||"")+
@@ -229,8 +229,8 @@ $("#ghc").onclick=function(){
   }).catch(function(e){gh(typeof e==="string"?e:"Could not reach GitHub. Check your internet connection.",true)})};
 $("#ghd").onclick=function(){if(!connected())return;if(confirm("Remove the saved token from this browser?")){clearTok();ghStatus();ui()}};
 /* ---------- site files check ---------- */
-var BUILD=11,BUILD_DATE="27 Oct 2026",WHATS_NEW="Audit fixes: footer and Help page, one-size caps, two-column phone shop, filters kept in the address, keyboard-safe cart, notify-me on sold-out items, price checks, share-preview tags.";
-var EXPECT={"index.html":5,"shop.html":5,"product.html":7,"about.html":4,"contact.html":5,"404.html":4,"help.html":4,"admin.html":7,"style.css":11,"script.js":11,"admin.js":11};
+var BUILD=12,BUILD_DATE="28 Oct 2026",WHATS_NEW="The Colour picker is gone from each product. Colour name and Colour group stay for items that come in several colours.";
+var EXPECT={"index.html":5,"shop.html":5,"product.html":7,"about.html":4,"contact.html":5,"404.html":4,"help.html":4,"admin.html":7,"style.css":11,"script.js":11,"admin.js":12};
 function checkFiles(){
   var out=$("#chkout");out.innerHTML="<li>Checking…</li>";
   if(!window.fetch){out.innerHTML="<li>This browser can't run the check.</li>";return Promise.resolve()}
