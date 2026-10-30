@@ -1,4 +1,4 @@
-/* cd-version:11 */
+/* cd-version:13 */
 :root{--deep:#08251a;--mid:#227d47;--lime:#abff44;--card:#0e3324;--line:#15402e;--text:#eef6ee;--muted:#a9c4b2}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--deep);color:var(--text);font-family:"DM Sans",system-ui,Arial,sans-serif;line-height:1.6}
@@ -452,3 +452,177 @@ body.nomotion .strip div{animation-play-state:paused}
 .strip:hover div{animation-play-state:paused}
 @media (max-width:420px){header.top .brand,header.top .logo{font-size:1.15rem}}
 .lbl{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+
+/* ==== Version 13: site additions (pages builder only) ==== */
+/* @@SITE13-START@@ */
+/* The hidden attribute always wins. It used to lose to .sale-banner{display:flex}, so "Shop the sale" showed with nothing on sale. */
+[hidden]{display:none!important}
+/* Copy hooks: an empty hook takes no room, and a section whose hooks are all empty disappears.
+   script.js hides them too; these rules keep the page tidy before it runs or if copy.js/engine.js are missing. */
+[data-t]:empty{display:none}
+[data-sec]:not(:has([data-t]:not(:empty):not([hidden]))){display:none}
+.salesec:has(.sale-banner[hidden]){display:none}
+/* quiet text: stays above 4.5:1 even on the darkest paper creases */
+body:not(.adm){--quiet:#3f5045}
+
+/* home: trust strip under the moving banner */
+.trustw{border-bottom:1px solid var(--line)}
+.trust{list-style:none;margin:0;padding:15px 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 28px;font-size:.92rem;font-weight:600;line-height:1.45;color:var(--text);text-align:center}
+.trust li{display:inline-flex;align-items:center;gap:9px}
+.trust li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:#227d47}
+.trust li:only-child::before{display:none}
+
+/* quiet one-line notes */
+.freshnote{margin:-8px 0 24px;max-width:62ch;font-size:.98rem;line-height:1.5;color:var(--quiet)}
+.shopintro{max-width:62ch;margin:-8px 0 26px;font-size:1.08rem;line-height:1.55;color:var(--quiet)}
+.catline{margin:-12px 0 10px;font-size:.95rem;font-weight:600;line-height:1.5;color:var(--text)}
+.official{margin-top:16px;color:var(--quiet)}
+.joinsmall{max-width:48ch;margin:2px auto 0;line-height:1.5}
+.cintro{max-width:58ch;margin:0 0 26px}
+.hintro{margin:0 0 26px}
+.formnote{margin:0;font-size:.88rem;line-height:1.5;color:var(--quiet)}
+.freshnote a,.shopintro a,.catline a,.official a,.joinsmall a,.formnote a,.lastline a,.biz a,.legal a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+
+/* product page: drop line under the price */
+.dropline{margin:8px 0 2px;font-size:.85rem;font-weight:600;line-height:1.45;color:#145a32}
+.dropline::before{content:"";display:inline-block;width:7px;height:7px;margin:0 8px 1px 0;border-radius:50%;background:#2f8f4e;vertical-align:middle}
+/* Coming soon: badge, and a card button that reads as "not yet" rather than broken */
+.badge.soon{background:#f4ecd9;color:#0b2a1d;box-shadow:inset 0 0 0 1px rgba(11,42,29,.45)}
+body:not(.adm) .add.soon:disabled,body:not(.adm) .badge.soon~.add:disabled{border-style:dashed;border-color:#47594e;color:var(--quiet);cursor:default}
+.soldnote a,.soonnote a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.soonnote{font-weight:600;color:var(--text)}
+
+/* help page: FAQ groups inside the help accordion */
+.helpbox .faq{padding-top:2px}
+.faqg{margin:24px 0 4px;font:700 .78rem/1.3 "DM Sans",system-ui,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#1b6a3a}
+.faq>.faqg:first-child{margin-top:6px}
+.helpbox .faq details{background:none;border-top:1px solid var(--line)}
+.helpbox .faq details:last-child{border-bottom:1px solid var(--line)}
+.helpbox .faq summary{min-height:48px;padding:12px 0;gap:16px;font-weight:600;line-height:1.4}
+.helpbox .faq summary::after{font-size:1.15rem}
+.helpbox .faq details>div{padding:0 0 14px;color:#333}
+.helpbox .faq details>div p{margin:0 0 8px}
+
+/* about: numbered "How a drop works" list, and paragraphs inside a lead block */
+.howlist{list-style:none;margin:0;padding:0;counter-reset:how}
+.howlist li{counter-increment:how;position:relative;padding:16px 0 16px 56px;border-top:1px solid var(--line);font-size:1.12rem;line-height:1.5;color:var(--text)}
+.howlist li:last-child{border-bottom:1px solid var(--line)}
+.howlist li::before{content:counter(how,decimal-leading-zero);position:absolute;left:0;top:16px;font:800 1.12rem/1.5 "Bricolage Grotesque","Arial Black",Arial,sans-serif;letter-spacing:-.01em;color:#145a32}
+.rich>p{margin:0 0 .8em}.rich>p:last-child{margin-bottom:0}
+.lastw{padding:36px 0 44px;text-align:center}
+.lastline{margin:0;font-size:1.05rem;color:var(--text)}
+
+/* contact: business details under the form */
+.biz{max-width:560px;margin:0 0 72px;padding-top:28px;border-top:1px solid var(--line)}
+.biz h2{font-size:1.45rem;letter-spacing:-.02em;margin:0 0 14px}
+.biz p{margin:0 0 10px;line-height:1.55;overflow-wrap:anywhere}
+
+/* footer: tagline and legal line */
+.ftag{margin:8px 0 0;max-width:30ch;font-size:.95rem;line-height:1.5;color:var(--text)}
+footer.foot .legal{margin:12px 0 0;max-width:46ch;font-size:.8rem;line-height:1.55;color:var(--quiet);overflow-wrap:anywhere}
+footer.foot .legal a,footer.foot .ftag a{margin:0}
+@media (max-width:600px){footer.foot .fgrid>div:first-child{grid-column:1/-1}}
+
+/* 404 */
+.wrap.nf{padding:80px 24px 120px}
+.nfbtns{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0 0}
+
+/* tap targets of at least 44px (the visual size stays the same where it can) */
+body:not(.adm) .crumbs a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px}
+body:not(.adm) .chips button{min-height:44px}
+body:not(.adm) .card h3 a{padding:13px 0;margin:-7px 0}
+footer.foot .fgrid nav a{display:flex;align-items:center;align-self:flex-start;min-height:44px;padding:0}
+#handles a{display:inline-block;padding:11px 4px}
+.spause::after{content:"";position:absolute;inset:-9px -6px}
+@media (prefers-reduced-motion:reduce){.spause{display:none}}
+main{overflow-wrap:anywhere}
+.ordertext{margin-top:10px}.ordertext summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}.ordertext textarea{width:100%;font:inherit;font-size:.85rem;padding:10px;border:1px solid #c9c9c9;border-radius:8px;background:#fff;color:#111}
+/* @@SITE13-END@@ */
+
+/* spacer 1: keeps the two blocks apart so parallel edits merge cleanly */
+/* spacer 2 */
+/* spacer 3 */
+/* spacer 4 */
+/* spacer 5 */
+/* spacer 6 */
+/* spacer 7 */
+/* spacer 8 */
+
+/* ==== Version 13: Store Manager additions (admin builder only) ==== */
+/* @@ADMIN13-START@@ */
+/* Store Manager v13: Current drop, Business details, Page words. Green admin theme only (body.adm). */
+.adm .jump{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.adm .jump a{display:inline-flex;align-items:center;min-height:40px;padding:6px 14px;border:1px solid var(--mid);border-radius:999px;text-decoration:none;font-size:.88rem;font-weight:600;color:var(--text)}
+.adm .jump a:hover{background:var(--mid)}
+.adm .panel{scroll-margin-top:84px}
+.adm input::placeholder,.adm textarea::placeholder{color:#a3b9ab;opacity:1;font-style:italic}
+.adm .fbox,.adm .wbox,.adm .sbox{min-width:0}
+.adm .fbox input,.adm .fbox select,.adm .fbox textarea,.adm .wbox textarea{margin-top:5px;color:#fff}
+.adm .fbox label .needtag{display:inline-block;margin-left:6px;background:#ffb454;color:#221;border-radius:999px;padding:0 8px;font-size:.72rem;font-weight:700}
+.adm .fbox label .needtag[hidden]{display:none}
+.adm .fbox.need input,.adm .fbox.need select{border-color:#ffb454}
+.adm .fh,.adm .ex,.adm .used,.adm .fwarn{display:block;font-size:.8rem;line-height:1.45;margin-top:5px;font-weight:400}
+.adm .fh{color:var(--muted)}
+.adm .ex{color:#a3b9ab;font-style:italic;overflow-wrap:anywhere}
+.adm .used{color:#8fb39c}
+.adm .fwarn{color:#ffb454;font-weight:600}
+.adm .fwarn[hidden]{display:none}
+.adm .ffields{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:18px 16px}
+.adm .fgroup{background:var(--deep);border:1px solid var(--line);border-radius:14px;margin:10px 0}
+.adm .fgroup>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:12px 16px;min-height:52px;font-weight:700}
+.adm .fgroup>summary::-webkit-details-marker{display:none}
+.adm .fgroup>summary::before{content:"\203A";display:inline-block;width:12px;color:var(--lime);font-size:1.3rem;line-height:1;transition:transform .2s}
+.adm .fgroup[open]>summary::before{transform:rotate(90deg)}
+.adm .fgroup>summary>span:first-child{flex:1;min-width:0}
+.adm .fgroup>summary .chip{margin:0}
+.adm .fgroup>div{padding:2px 16px 18px}
+.adm .fgroup .fields{margin-top:6px}
+.adm .ftop{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 18px}
+.adm .prog{flex:1 1 240px;max-width:520px}
+.adm .prog b{display:block;margin-bottom:6px}
+.adm .pbar{display:block;height:10px;border-radius:99px;background:var(--deep);border:1px solid var(--line);overflow:hidden}
+.adm .pbar i{display:block;height:100%;width:0;background:var(--lime);transition:width .3s}
+.adm .fmiss{background:var(--deep);border-radius:12px;padding:12px 14px;margin:12px 0 6px;font-size:.9rem;color:var(--muted)}
+.adm .fmiss b{color:var(--text)}
+.adm .lnk{background:none;border:0;padding:6px 0;min-height:36px;color:var(--lime);text-decoration:underline;font:inherit;cursor:pointer;text-align:left}
+.adm .onlyempty .fbox.filled,.adm .onlyempty .fgroup.full{display:none}
+.adm .wbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.adm .wbox label{color:var(--text);font-size:.92rem}
+.adm .wstate{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.adm .tag{display:inline-block;font-size:.76rem;font-weight:700;border-radius:999px;padding:3px 10px;background:#173f2c;color:var(--lime)}
+.adm .tag:empty{display:none}
+.adm .tag.yours{background:#ffd166;color:#08251a}
+.adm .tag.none{background:transparent;color:var(--muted);border:1px solid var(--mid)}
+.adm .wbtn{background:transparent;color:var(--text);border:1px solid var(--mid);border-radius:999px;padding:6px 14px;font:inherit;font-size:.85rem;cursor:pointer;min-height:40px}
+.adm .wbtn:hover{background:var(--mid)}
+.adm .wbtn[hidden]{display:none}
+.adm .wnote{flex-basis:100%;font-size:.8rem;color:#ffd166}
+.adm .wnote:empty{display:none}
+.adm .sbox .wstate{margin-top:6px}
+.adm .dwarn{margin:14px 0 0;color:#ffb454;font-weight:600}
+.adm .dwarn:empty{margin:0}
+.adm .dropnow{margin-top:14px;background:var(--deep);border:1px solid var(--mid);border-radius:14px;padding:14px 16px}
+.adm .dropnow dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 14px;margin:10px 0 4px}
+.adm .dropnow dt{color:var(--muted);font-size:.85rem}
+.adm .dropnow dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.adm .phint{color:var(--muted);font-size:.85rem;margin:-2px 0 10px}
+.adm .nocde{color:#ffd166}
+.adm .ptop b{overflow-wrap:anywhere}
+@media (max-width:600px){
+ .adm .wrap{padding-left:14px;padding-right:14px}
+ .adm .panel{padding:18px 14px;border-radius:16px}
+ .adm .prow{padding:12px}
+ .adm .fgroup>summary{padding:10px 12px}
+ .adm .fgroup>div{padding:2px 12px 14px}
+ .adm .dropnow dl{grid-template-columns:minmax(0,1fr);gap:2px}
+ .adm .dropnow dd{margin-bottom:8px}
+ .adm .gate{margin:40px 12px;padding:24px 18px}
+ .adm .actions{padding:8px 10px;gap:6px 8px}
+ .adm .actions .btn{padding:8px 14px}
+ .adm #status{min-width:0;flex-basis:100%;text-align:center}
+ .adm #status:empty{display:none}
+ .adm main{padding-bottom:150px}
+ .adm .ptop button{margin:4px 4px 0 0}
+}
+@media (prefers-reduced-motion:reduce){.adm .fgroup>summary::before,.adm .pbar i{transition:none}}
+/* @@ADMIN13-END@@ */

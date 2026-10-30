@@ -7,6 +7,18 @@ Each time new files are sent, the version number goes up by one. The Store Manag
 2. Click Commit changes, wait two minutes, then hard-refresh with Ctrl+Shift+R.
 3. Open the Store Manager, then Site files check. Everything should show a tick.
 
+## Version 13 (30 Oct 2026)
+New wording on every page, and a way to fill in your business details later without anything half-finished showing in the meantime.
+- **Wording everywhere.** Home, Shop, product pages, Cart, the message after Checkout, About, Contact, Help (Shipping, Returns, FAQ, Size guide, Privacy, Terms), the sign-up form, the page-not-found page, page titles and link previews all read properly now. Help no longer says "We are still writing our shipping information".
+- **Nothing is promised that you have not said is true.** A line that needs a fact (heavyweight fabric, limited runs, member perks, the 18+ rule, delivery days, the postage fee) appears only after you fill in the matching box. Empty boxes are simply left out. Your rights for faulty goods under the Australian Consumer Law are always shown and cannot be switched off.
+- **Coming soon.** Pieces that have not gone on sale can say "Coming soon" instead of "Sold out". The Shop lists pieces you can buy first, then coming soon, then sold out.
+- **Cart and checkout.** If you enter a delivery fee, the cart adds a Postage line to orders under the free-shipping amount. The message after Checkout says that nothing is charged yet and shows the order text to copy if no email app opens.
+- **Store Manager, three new panels.** *Current drop* (open, coming or between drops), *Business details* (44 optional boxes in 9 groups, each saying where it shows up, with a "still missing before launch" list) and *Page words* (18 pieces of wording you can rewrite; an empty box shows the suggested wording in grey). Quick price tools skip Coming soon pieces. A box that needs a plain number asks before it publishes words. On phones the Save bar no longer hides the last lines.
+- **Fixes.** Contact and sign-up forms send once even if tapped repeatedly. The photo viewer opens with the Enter key. Old links such as shop.html?cat=Pants still land on the right shop view. Preview links stay in preview. Long words wrap on phones.
+- Two new files, **copy.js** and **engine.js**, hold the wording and the rules for when it shows. The Site files check lists them.
+
+Upload: 404.html, about.html, admin.html, admin.js, contact.html, copy.js (new), engine.js (new), help.html, index.html, product.html, script.js, shop.html, sitemap.xml (new), style.css and CHANGELOG.md. Leave data.js, lock.js, paper.jpg and the images folder alone. The optional product tidy-ups (new categories, no false badges) change data.js, so they are applied to a fresh copy of your live data.js on release day, only if you choose them.
+
 ## Version 12 (28 Oct 2026)
 - Removed the Colour picker from each product in the Store Manager. Colour name and Colour group are still there for items that come in several colours. Only admin.js changes: upload admin.js (and CHANGELOG.md).
 
